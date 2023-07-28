@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang=ko>
+
+<head>
+	<title>Web Camera</title>
+</head>
+<!--
+    +---+-------------------------------------------------+
+    |   |               ( upper margin )                  |
+    |   +----------------------------+--------------------+
+    | l |           title            |                    |
+    | e |----------------------------+--------------------+
+    | f |                         72 |     On  Video      |
+    | t |                            +--------------------+
+    |   |                         72 |     Off Video      |
+    | m |                            +------+------+------+
+    | a |         480 x 360       72 |      |  up  |      |
+    | r |                            +------+------+------+
+    | g |                         72 | left | init | right|
+    | i |                            +------+------+------+
+    | n |                         72 |      | down |      |
+    |   +----------------------------+------+------+------+
+    |   | preset1   preset2   preset3   preset4   preset5 |
+    +---+-------------------------------------------------+
+-->
+<body>
+	<table border="0">
+        <tr align="center" height="36"><!-- 1 -->
+            <td rowspan="8" width="72"></td>
+            <td colspan="4" align="center"></td>
+        </tr align="center" height="72">
+        <tr align="center" height="72"><!-- 2 -->
+            <td align="center"><h2>RaspberryPi Web Camera</h2></td>
+            <td colspan="3" align="center"></td>
+        </tr>
+        <tr align="center" height="72"><!-- 3 -->
+            <td width="480" rowspan="5">
+                <iframe width="480" height="360" src="./images/offline_480x360.png" frameborder="0" border="0" marginwidth="0" marginheight="0" id="mjpeg"></iframe>
+            </td>
+            <td colspan="3" align="center">
+                <input type="button" style="width:100px; height:40px" value="Video On" onClick="video_on()">
+            </td>
+        </tr>
+        <tr align="center" height="100"><!-- 4 -->
+            <td colspan="3" align="center">
+                <input type="button" style="width:100px;height:40px" value="Video Off" onClick="video_off()">
+                </br>&nbsp;</br>&nbsp;</br>&nbsp;
+            </td>
+        </tr>
+        <tr align="center" height="60"><!-- 5 -->
+            <td width="72"></td>
+            <td width="72">
+                <input type="button" value="Up"    onClick="up()"    style="width:55px;height:55px">
+            </td>
+            <td width="72"></td>
+        </tr>
+        <tr height="68"><!-- 6 -->
+            <td align="right">
+                <input type="button" value="Left"  onClick="left()"  style="width:55px;height:55px">
+            </td>
+            <td align="center">
+                <input type="button" value="Init"  onClick="init()"  style="width:55px;height:55px">
+            </td>
+            <td>
+                <input type="button" value="Right" onClick="right()" style="width:55px;height:55px">
+            </td>
+        </tr>
+        <tr align="center" height="60"><!-- 7 -->
+            <td></td>
+            <td>
+                <input type="button" value="Down"  onClick="down()"  style="width:55px;height:55px">
+            </td>
+            <td></td>
+        </tr>
+        <tr  align="center" height="72"><!-- 8 -->
+            <td colspan="4" align="center">
+                </br>
+                <input type="button" value="Preset1" onClick="preset1()" style="width:100px;height:40px">
+                                                                        &nbsp; &nbsp; &nbsp; &nbsp;
+                <input type="button" value="Preset2" onClick="preset2()" style="width:100px;height:40px">
+                                                                        &nbsp; &nbsp; &nbsp; &nbsp;
+                <input type="button" value="Preset3" onClick="preset3()" style="width:100px;height:40px">
+                                                                        &nbsp; &nbsp; &nbsp; &nbsp;
+                <input type="button" value="Preset4" onClick="preset4()" style="width:100px;height:40px">
+                                                                        &nbsp; &nbsp; &nbsp; &nbsp;
+                <input type="button" value="capture" onClick="capture()" style="width:100px;height:40px">
+            </td>
+        </tr>
+    </table>
+    
+    
+    <iframe width="50" height="15" src="about:blank" scrolling=no" frameborder="0" border="0" marginwidth="0" marginheight="0" name="response"></iframe>
+    
+    
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+	  <script src="/socket.io/socket.io.js"></script>
+    
+    <script>
+    var socket = io();
+    var can_capture    = true;
+    var stream_started = false
+    
+    function video_on() {
+        can_capture = false;
+        if(stream_started == false) {
+            response.location.href=("http://10.10.13.47:3000/video_on");
+            stream_started = true;
+        }
+        document.getElementById("mjpeg").src = "http://localhost:8080/stream_simple.html";
+    }
+    
+    function video_off() {
+        document.getElementById("mjpeg").src = "./images/offline_480x360.png";
+    }
+    
+    function init() {
+        response.location.href=("http://localhost:3000/init");
+    }
+    
+    function up() {
+        response.location.href=("http://localhost:3000/up");
+    }
+    
+    function down() {
+        response.location.href=("http://localhost:3000/down");
+    }
+    
+    function left() {
+        response.location.href=("http://localhost:3000/left");
+    }
+    
+    function right() {
+        response.location.href=("http://localhost:3000/right");
+    }
+    
+    function preset1() {
+        response.location.href=("http://localhost:3000/preset1");
+    }
+    
+    function preset2() {
+        response.location.href=("http://localhost:3000/preset2");
+    }
+    
+    function preset3() {
+    }
+    
+    function preset4() {
+    }
+    
+    function capture() {
+            response.location.href=("http://localhost:3000/capture");
+            socket.on('img_file', function(img_file){
+                $('#mjpeg').attr('src', img_file);
+            });
+            }
+    </script>
+</body>
+</html>
